@@ -1,0 +1,1 @@
+此项目为[v-mock](https://gitee.com/vtDev/v-mock)的postgre版本，详情请见[v-mock](https://gitee.com/vtDev/v-mock)。
