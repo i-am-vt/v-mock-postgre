@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static cn.hutool.core.util.StrUtil.SLASH;
+
 /**
  * 子路径Service业务层处理
  *
@@ -37,7 +39,10 @@ public class MockUrlLogicServiceImpl extends ServiceImpl<MockUrlLogicMapper, Moc
     @Override
     public List<MockUrlLogic> insertByUrl(String url) {
         // 根据斜线分割 插入逻辑表
-        List<String> subUrls = StrUtil.splitTrim(url, "/");
+        List<String> subUrls = StrUtil.splitTrim(url, SLASH);
+        if (subUrls.isEmpty()) {
+            subUrls.add(SLASH);
+        }
         // 查询保存过，或已存在的record
         List<MockUrlLogic> queryResult = this.list(Wrappers.<MockUrlLogic>lambdaQuery()
                 .select(MockUrlLogic::getSubUrl, MockUrlLogic::getLogicId).in(MockUrlLogic::getSubUrl, subUrls));
@@ -80,7 +85,7 @@ public class MockUrlLogicServiceImpl extends ServiceImpl<MockUrlLogicMapper, Moc
         List<String> subUrls = StrUtil.splitTrim(url, StrUtil.C_SLASH);
         // empty -> put '/'
         if (subUrls.isEmpty()) {
-            subUrls.add(StrUtil.SLASH);
+            subUrls.add(SLASH);
         }
         // 查询对应logicId
         List<MockUrlLogic> urlLogics = this.list(Wrappers.<MockUrlLogic>lambdaQuery()
