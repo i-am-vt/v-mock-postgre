@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.vmock.base.constant.CommonConst;
+import com.vmock.base.utils.CommonUtils;
 import com.vmock.biz.entity.MockUrl;
 import com.vmock.biz.entity.MockUrlLogic;
 import com.vmock.biz.mapper.MockUrlMapper;
@@ -13,7 +14,6 @@ import com.vmock.biz.service.IMockUrlService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -188,6 +188,7 @@ public class MockUrlServiceImpl extends ServiceImpl<MockUrlMapper, MockUrl> impl
      * @param mockUrl url路径
      * @return 结果
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateMockUrl(MockUrl mockUrl) {
         // url处理
@@ -206,6 +207,6 @@ public class MockUrlServiceImpl extends ServiceImpl<MockUrlMapper, MockUrl> impl
      */
     @Override
     public boolean deleteMockUrlByIds(String ids) {
-        return this.removeByIds(StrUtil.splitTrim(ids, COMMA));
+        return this.removeByIds(CommonUtils.splitToIdList(ids, COMMA));
     }
 }

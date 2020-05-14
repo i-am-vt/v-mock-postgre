@@ -9,11 +9,10 @@ import com.vmock.biz.mapper.MockUrlLogicMapper;
 import com.vmock.biz.service.IMockUrlLogicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,17 +33,28 @@ public class MockUrlLogicServiceImpl extends ServiceImpl<MockUrlLogicMapper, Moc
      * @param url 用户输入的url
      * @return 插入后的子urls
      */
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     @Override
     public List<MockUrlLogic> insertByUrl(String url) {
         // 根据斜线分割 插入逻辑表
-        String[] subUrls = url.split("\\/");
+        List<String> subUrls = StrUtil.splitTrim(url, "/");
+        // 查询保存过，或已存在的record
+        List<MockUrlLogic> queryResult = this.list(Wrappers.<MockUrlLogic>lambdaQuery()
+                .select(MockUrlLogic::getSubUrl, MockUrlLogic::getLogicId).in(MockUrlLogic::getSubUrl, subUrls));
+        if (queryResult.size() == subUrls.size()) {
+            return queryResult;
+        }
+        // 转为set 方便查找
+        Set<String> existLogicSet = queryResult.stream().map(MockUrlLogic::getSubUrl)
+                .collect(Collectors.toSet());
+
         List<MockUrlLogic> mockUrlLogics = new ArrayList<>();
         // 做成集合批量插入
         //  db sub_url是 UNIQUE，并 ON CONFLICT IGNORE，不会重复。
         MockUrlLogic mockUrlLogic;
         for (String subUrl : subUrls) {
-            // 空 不记录
-            if (StrUtil.isBlank(subUrl)) {
+            // 空 不记录 and 存在不记录
+            if (StrUtil.isBlank(subUrl) || existLogicSet.contains(subUrl)) {
                 continue;
             }
             // 存入集合
@@ -53,8 +63,8 @@ public class MockUrlLogicServiceImpl extends ServiceImpl<MockUrlLogicMapper, Moc
             mockUrlLogics.add(mockUrlLogic);
         }
         this.saveBatch(mockUrlLogics);
-        // 查询保存过，或已存在的record
-        List<MockUrlLogic> queryResult = this.list(Wrappers.<MockUrlLogic>lambdaQuery().in(MockUrlLogic::getSubUrl, subUrls));
+        // 合并返回
+        queryResult.addAll(mockUrlLogics);
         return queryResult;
     }
 

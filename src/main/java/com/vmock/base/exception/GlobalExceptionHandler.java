@@ -1,6 +1,6 @@
 package com.vmock.base.exception;
 
-import com.vmock.base.utils.ContextUtils;
+import com.vmock.base.utils.CommonUtils;
 import com.vmock.base.vo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public Object businessException(HttpServletRequest request, BusinessException e) {
         log.error(e.getMessage(), e);
-        if (ContextUtils.isAjAx(request)) {
+        if (CommonUtils.isAjAx(request)) {
             return Result.error(e.getMessage());
         } else {
             ModelAndView modelAndView = new ModelAndView();

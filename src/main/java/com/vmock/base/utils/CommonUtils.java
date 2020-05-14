@@ -11,14 +11,21 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * 客户端工具类
+ * 共同工具类
+ * <p>
+ * 填写方法前，请优先查阅hutool，commonlang3等工具集是否有可用方法。
  *
- * @author mock
+ * @author vt
  */
 @UtilityClass
-public class ContextUtils {
+public class CommonUtils {
+
+    // ------------------- 请求相关 ----------------------------
 
     private static final String XHR = "XMLHttpRequest";
 
@@ -92,4 +99,19 @@ public class ContextUtils {
         }
         return false;
     }
+
+    // ------------------- 类型转换 ----------------------------
+    public static List<Long> splitToIdList(String str, CharSequence separator) {
+        if (StrUtil.isNotEmpty(str) && separator != null) {
+            String[] strArr = str.split(separator.toString());
+            // 转为list
+            ArrayList<Long> idList = new ArrayList<>(strArr.length);
+            for (String item : strArr) {
+                idList.add(Long.valueOf(item));
+            }
+            return idList;
+        }
+        return Collections.emptyList();
+    }
+
 }

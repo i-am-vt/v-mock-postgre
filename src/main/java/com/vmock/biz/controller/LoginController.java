@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.http.ContentType;
 import com.vmock.base.constant.LoginConst;
-import com.vmock.base.utils.ContextUtils;
+import com.vmock.base.utils.CommonUtils;
 import com.vmock.base.vo.Result;
 import com.vmock.biz.service.IUserService;
 import org.apache.shiro.SecurityUtils;
@@ -36,7 +36,7 @@ public class LoginController extends BaseController {
     @GetMapping("/login")
     public String login(HttpServletRequest request, HttpServletResponse response) {
         // 如果是Ajax请求，返回Json字符串。
-        if (ContextUtils.isAjAx(request)) {
+        if (CommonUtils.isAjAx(request)) {
             ServletUtil.write(response, LoginConst.TIME_OUT, ContentType.JSON.toString(CharsetUtil.CHARSET_UTF_8));
             return null;
         }

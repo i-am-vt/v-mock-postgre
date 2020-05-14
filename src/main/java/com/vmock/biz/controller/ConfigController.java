@@ -1,6 +1,6 @@
 package com.vmock.biz.controller;
 
-import cn.hutool.core.util.StrUtil;
+import com.vmock.base.utils.CommonUtils;
 import com.vmock.base.vo.Result;
 import com.vmock.base.vo.TableDataVo;
 import com.vmock.biz.entity.Config;
@@ -12,6 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static cn.hutool.core.util.StrUtil.COMMA;
 
 /**
  * 参数配置 信息操作处理
@@ -77,7 +79,7 @@ public class ConfigController extends BaseController {
     @PostMapping("/remove")
     @ResponseBody
     public Result<Void> remove(String ids) {
-        return create(configService.removeByIds(StrUtil.splitTrim(ids, StrUtil.C_COMMA)));
+        return create(configService.removeByIds(CommonUtils.splitToIdList(ids, COMMA)));
     }
 
     /**

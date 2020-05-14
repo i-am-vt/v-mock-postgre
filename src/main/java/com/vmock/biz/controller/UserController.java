@@ -2,6 +2,7 @@ package com.vmock.biz.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.vmock.base.login.UserContext;
+import com.vmock.base.utils.CommonUtils;
 import com.vmock.base.utils.ExcelUtil;
 import com.vmock.base.vo.Result;
 import com.vmock.base.vo.TableDataVo;
@@ -120,7 +121,7 @@ public class UserController extends BaseController {
     @DeleteMapping
     @ResponseBody
     public Result remove(String ids) {
-        return create(userService.removeByIds(StrUtil.splitTrim(ids, StrUtil.COMMA)));
+        return create(userService.removeByIds(CommonUtils.splitToIdList(ids, StrUtil.COMMA)));
     }
 
     /**
